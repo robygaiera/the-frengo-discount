@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sconto esatto · calcolatore prezzo IVato</title>
+<meta name="description" content="Calcola la percentuale di sconto esatta, con tutti i decimali che vuoi, per portare un prezzo IVato a un importo preciso." />
+<meta name="theme-color" content="#2563eb" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='45' font-family='Helvetica,Arial,sans-serif' font-size='36' font-weight='700' fill='%23fff' text-anchor='middle'%3E%25%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#f5f6f9;
+    --panel:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --seg:#eef2f7;
+    --accent:#2563eb;
+    --accent-soft:#eef4ff;
+    --good:#067647;
+    --res1:#1d4ed8;
+    --res2:#1e3a8a;
+    --glow1:#e6efff;
+    --glow2:#e7f8f0;
+    --radius:16px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b1120;
+      --panel:#111a2e;
+      --text:#e8eefc;
+      --muted:#93a4c3;
+      --line:#22304d;
+      --seg:#182338;
+      --accent:#60a5fa;
+      --accent-soft:#16233c;
+      --res1:#1e3a8a;
+      --res2:#172554;
+      --glow1:#132036;
+      --glow2:#0f2430;
+    }
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0}
+  body{
+    min-height:100vh;
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(900px 520px at 10% -10%, var(--glow1), transparent 62%),
+      radial-gradient(700px 420px at 105% 0%, var(--glow2), transparent 58%),
+      var(--bg);
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:36px 20px 64px}
+  header{padding:0 0 24px}
+  .eyebrow{
+    font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);
+  }
+  h1{
+    font-size:clamp(28px,4.6vw,38px);line-height:1.1;letter-spacing:-.025em;
+    margin:8px 0 10px;
+  }
+  .lede{margin:0;max-width:62ch;font-size:15px;line-height:1.6;color:var(--muted)}
+  .layout{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+  @media (min-width:840px){
+    .layout{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);align-items:start}
+  }
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;box-shadow:0 1px 2px rgba(15,23,42,.05);
+  }
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:520px){.form-grid{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .field.full{grid-column:1/-1}
+  .field > label{
+    font-size:12.5px;font-weight:650;color:var(--muted);letter-spacing:.01em;
+    display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;
+  }
+  .field > label .hint{font-size:11.5px;font-weight:500;opacity:.85}
+  .control{position:relative;display:flex;align-items:center}
+  input[type="text"], select{
+    width:100%;height:48px;padding:0 14px;font-family:inherit;font-size:16px;
+    color:var(--text);background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;outline:none;font-variant-numeric:tabular-nums;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  input[type="text"]:focus, select:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .control .affix{position:absolute;font-size:14px;color:var(--muted);pointer-events:none}
+  .control .affix.left{left:14px}
+  .control .affix.right{right:14px}
+  .control.has-left input{padding-left:32px}
+  .control.has-right input{padding-right:36px}
+  .control.select::after{
+    content:"";position:absolute;right:17px;top:50%;width:7px;height:7px;
+    border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:translateY(-70%) rotate(45deg);pointer-events:none;
+  }
+  .control.select select{appearance:none;-webkit-appearance:none;padding-right:40px;cursor:pointer}
+  .seg{
+    display:flex;gap:4px;padding:4px;background:var(--seg);
+    border-radius:12px;height:48px;position:relative;
+  }
+  .seg input{position:absolute;width:1px;height:1px;opacity:0;margin:0;pointer-events:none}
+  .seg label{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+    border-radius:9px;font-size:13px;font-weight:600;color:var(--muted);
+    cursor:pointer;user-select:none;white-space:nowrap;
+    transition:background .15s,color .15s,box-shadow .15s;
+  }
+  .seg input:checked + label{
+    background:var(--panel);color:var(--text);
+    box-shadow:0 1px 3px rgba(15,23,42,.14);
+  }
+  .seg input:focus-visible + label{
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+  .result{
+    border-radius:20px;padding:22px;color:#fff;
+    background:linear-gradient(155deg,var(--res1),var(--res2));
+    box-shadow:0 20px 44px -26px rgba(29,78,216,.95);
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .result-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .result-label{
+    font-size:11.5px;font-weight:650;letter-spacing:.12em;text-transform:uppercase;
+    color:rgba(255,255,255,.72);
+  }
+  .copy{
+    border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;
+    font:600 12.5px/1 var(--sans);padding:8px 12px;border-radius:999px;cursor:pointer;
+    transition:background .15s,opacity .15s;
+  }
+  .copy:hover:not(:disabled){background:rgba(255,255,255,.24)}
+  .copy:disabled{opacity:.45;cursor:not-allowed}
+  .big{display:flex;align-items:baseline;gap:6px;line-height:1;letter-spacing:-.02em}
+  .big-value{
+    font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700;
+    font-size:clamp(30px,7.4vw,44px);word-break:break-all;
+  }
+  .big-value.is-long{font-size:clamp(19px,4.4vw,27px)}
+  .big-unit{font-size:20px;font-weight:600;color:rgba(255,255,255,.7)}
+  .result-hint{margin:0;font-size:13px;line-height:1.5;color:rgba(255,255,255,.78)}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chip{
+    background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.15);
+    border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;min-width:0;
+  }
+  .chip span{
+    font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(255,255,255,.66);
+  }
+  .chip strong{font-family:var(--mono);font-size:15px;font-weight:600;word-break:break-all}
+  .note{
+    font-size:12.5px;line-height:1.5;border-radius:10px;padding:10px 12px;
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+    color:rgba(255,255,255,.9);
+  }
+  .note.warn{background:rgba(255,196,0,.17);border-color:rgba(255,214,102,.55)}
+  .details{margin-top:16px}
+  .details h2{margin:0 0 8px;font-size:15px;letter-spacing:-.01em}
+  .rows{margin:0;display:flex;flex-direction:column}
+  .rows > div{
+    display:flex;justify-content:space-between;align-items:baseline;gap:18px;
+    padding:11px 0;border-bottom:1px dashed var(--line);
+  }
+  .rows > div:last-child{border-bottom:0}
+  .rows dt{font-size:13.5px;color:var(--muted)}
+  .rows dd{
+    margin:0;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;
+    text-align:right;
+  }
+  .rows .strong dt{color:var(--text);font-weight:650}
+  .rows .strong dd{font-weight:700}
+  .tag{
+    display:inline-block;padding:2px 7px;border-radius:999px;background:var(--accent-soft);
+    color:var(--accent);font-size:10.5px;font-weight:650;letter-spacing:.03em;text-transform:none;
+  }
+  .how{margin-top:16px;padding:0}
+  .how summary{
+    cursor:pointer;padding:16px 20px;font-size:14px;font-weight:600;list-style:none;
+    display:flex;align-items:center;gap:8px;
+  }
+  .how summary::-webkit-details-marker{display:none}
+  .how summary::before{
+    content:"";width:7px;height:7px;border-right:2px solid var(--muted);
+    border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;
+    flex:0 0 auto;
+  }
+  .how[open] summary::before{transform:rotate(45deg)}
+  .how-body{padding:0 20px 18px;color:var(--muted);font-size:13.5px;line-height:1.6}
+  .how-body p{margin:0 0 10px}
+  .how-body pre{
+    margin:0 0 10px;padding:12px 14px;background:var(--seg);border-radius:10px;
+    overflow-x:auto;
+  }
+  .how-body code{font-family:var(--mono);font-size:12.5px;white-space:pre;color:var(--text)}
+  footer{margin-top:26px;text-align:center;font-size:12px;color:var(--muted);line-height:1.6}
+  .toast{
+    position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);
+    background:#0f172a;color:#fff;padding:10px 16px;border-radius:999px;
+    font-size:13px;font-weight:550;opacity:0;pointer-events:none;
+    transition:opacity .18s,transform .18s;z-index:50;
+    box-shadow:0 14px 34px -14px rgba(0,0,0,.6);max-width:calc(100vw - 32px);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media (prefers-color-scheme: dark){
+    .toast{background:#e8eefc;color:#0b1120}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">Calcolatore</div>
+    <h1>Sconto esatto</h1>
+    <p class="lede">Trova la percentuale di sconto — con quanti decimali vuoi — che porta il totale IVato esattamente al prezzo che hai in testa.</p>
+  </header>
+
+  <div class="layout">
+    <section class="card" aria-label="Dati di partenza">
+      <div class="form-grid">
+        <div class="field full">
+          <label for="target">Prezzo finale che vuoi ottenere <span class="hint">IVA inclusa, totale</span></label>
+          <div class="control has-left">
+            <span class="affix left">€</span>
+            <input type="text" id="target" inputmode="decimal" value="10,00" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="qty">Quantità</label>
+          <div class="control">
+            <input type="text" id="qty" inputmode="decimal" value="1" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="start">Prezzo di partenza <span class="hint">per pezzo</span></label>
+          <div class="control has-left">
+            <span class="affix left">€</span>
+            <input type="text" id="start" inputmode="decimal" value="15,00" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="field full">
+          <label id="modeLabel">Il prezzo di partenza è</label>
+          <div class="seg" role="radiogroup" aria-labelledby="modeLabel">
+            <input type="radio" name="startmode" id="mode-incl" value="incl" checked />
+            <label for="mode-incl">IVA inclusa</label>
+            <input type="radio" name="startmode" id="mode-excl" value="excl" />
+            <label for="mode-excl">IVA esclusa</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="vat">Aliquota IVA</label>
+          <div class="control has-right">
+            <span class="affix right">%</span>
+            <input type="text" id="vat" inputmode="decimal" value="22" autocomplete="off" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="decimals">Decimali dello sconto</label>
+          <div class="control select">
+            <select id="decimals">
+              <option value="2">2 decimali</option>
+              <option value="3">3 decimali</option>
+              <option value="4">4 decimali</option>
+              <option value="6" selected>6 decimali</option>
+              <option value="8">8 decimali</option>
+              <option value="10">10 decimali</option>
+              <option value="12">12 decimali</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="result" aria-live="polite">
+      <div class="result-top">
+        <span class="result-label">Sconto da applicare</span>
+        <button class="copy" id="copyBtn" type="button" disabled>Copia %</button>
+      </div>
+      <div class="big">
+        <span class="big-value" id="pctValue">—</span><span class="big-unit">%</span>
+      </div>
+      <p class="result-hint" id="pctHint">Inserisci i dati per vedere lo sconto.</p>
+
+      <div class="chips">
+        <div class="chip">
+          <span>Unitario scontato</span>
+          <strong id="unitPrice">—</strong>
+        </div>
+        <div class="chip">
+          <span>Totale IVato</span>
+          <strong id="totalPrice">—</strong>
+        </div>
+      </div>
+
+      <div class="note" id="roundNote" hidden></div>
+      <div class="note warn" id="warnNote" hidden></div>
+    </section>
+  </div>
+
+  <section class="card details" aria-label="Dettaglio del calcolo">
+    <h2>Dettaglio</h2>
+    <dl class="rows">
+      <div>
+        <dt>Listino unitario <span class="tag" id="modeTag">IVA incl.</span></dt>
+        <dd id="rUnit">—</dd>
+      </div>
+      <div>
+        <dt>Totale di listino <span class="tag" id="rQty" hidden></span></dt>
+        <dd id="rList">—</dd>
+      </div>
+      <div>
+        <dt>Sconto</dt>
+        <dd id="rDisc">—</dd>
+      </div>
+      <div class="strong">
+        <dt>Totale scontato (IVA incl.)</dt>
+        <dd id="rTotal">—</dd>
+      </div>
+      <div>
+        <dt>Imponibile</dt>
+        <dd id="rNet">—</dd>
+      </div>
+      <div>
+        <dt>IVA <span id="rVatPct"></span></dt>
+        <dd id="rVat">—</dd>
+      </div>
+    </dl>
+  </section>
+
+  <details class="card how">
+    <summary>Come viene calcolato</summary>
+    <div class="how-body">
+      <p>Se il prezzo di partenza è IVA esclusa, lo porto prima IVA inclusa. Poi ricavo lo sconto che porta il totale esattamente al prezzo che hai indicato:</p>
+      <pre><code>sconto % = (1 − prezzo finale ÷ (listino IVato × quantità)) × 100</code></pre>
+      <p>La percentuale esce con i decimali che scegli. Se il gestionale accetta solo 2 decimali, il riquadro "Con … %" ti dice che totale otterresti e di quanto si scosta dal prezzo richiesto.</p>
+      <p>Tutti i calcoli girano nel tuo browser: nessun dato viene inviato da nessuna parte.</p>
+    </div>
+  </details>
+
+  <footer>Nessuna installazione, nessun tracciamento. Solo il conto.</footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  var els = {
+    target: $("target"),
+    qty: $("qty"),
+    start: $("start"),
+    vat: $("vat"),
+    decimals: $("decimals"),
+    pct: $("pctValue"),
+    hint: $("pctHint"),
+    unitPrice: $("unitPrice"),
+    totalPrice: $("totalPrice"),
+    roundNote: $("roundNote"),
+    warnNote: $("warnNote"),
+    copyBtn: $("copyBtn"),
+    toast: $("toast"),
+    rUnit: $("rUnit"),
+    rQty: $("rQty"),
+    rList: $("rList"),
+    rDisc: $("rDisc"),
+    rTotal: $("rTotal"),
+    rNet: $("rNet"),
+    rVat: $("rVat"),
+    rVatPct: $("rVatPct"),
+    modeTag: $("modeTag")
+  };
+
+  var moneyFmt = function (max) {
+    return new Intl.NumberFormat("it-IT", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: max
+    });
+  };
+  var fmt2 = moneyFmt(2);
+  var fmt4 = moneyFmt(4);
+  var fmtQty = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 3 });
+
+  function num(value, decimals) {
+    return new Intl.NumberFormat("it-IT", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    }).format(value);
+  }
+
+  function eur(value, max) {
+    var f = max === 4 ? fmt4 : fmt2;
+    return f.format(clean(value)) + " €";
+  }
+
+  function sign(v) {
+    return v < 0 ? "−" : "+";
+  }
+
+  function clean(v) {
+    return Math.abs(v) < 5e-13 ? 0 : v;
+  }
+
+  // Accetta "10,50", "10.50", "1.234,56", "10"
+  function parseNum(raw) {
+    if (raw === null || raw === undefined) return NaN;
+    var s = String(raw).trim().replace(/[€%\s]/g, "");
+    if (!s) return NaN;
+    if (s.indexOf(",") > -1 && s.indexOf(".") > -1) {
+      s = s.replace(/\./g, "").replace(",", ".");
+    } else {
+      s = s.replace(",", ".");
+    }
+    var n = Number(s);
+    return isFinite(n) ? n : NaN;
+  }
+
+  function readState() {
+    var modeEl = document.querySelector('input[name="startmode"]:checked');
+    var mode = modeEl ? modeEl.value : "incl";
+    var decimals = parseInt(els.decimals.value, 10);
+    if (!isFinite(decimals)) decimals = 6;
+
+    var target = parseNum(els.target.value);
+    var start = parseNum(els.start.value);
+    var qtyRaw = parseNum(els.qty.value);
+    var vatRaw = parseNum(els.vat.value);
+
+    var vat = isFinite(vatRaw) ? Math.max(0, vatRaw) / 100 : 0;
+    var qty = isFinite(qtyRaw) && qtyRaw > 0 ? qtyRaw : NaN;
+
+    var valid = isFinite(target) && target >= 0 && isFinite(start) && start > 0 && isFinite(qty);
+
+    return {
+      valid: valid,
+      mode: mode,
+      decimals: Math.min(12, Math.max(0, decimals)),
+      target: target,
+      start: start,
+      qty: qty,
+      vat: vat,
+      vatPct: isFinite(vatRaw) ? Math.max(0, vatRaw) : 0
+    };
+  }
+
+  function resetOutputs() {
+    els.pct.textContent = "—";
+    els.pct.classList.remove("is-long");
+    els.hint.textContent = "Inserisci i dati per vedere lo sconto.";
+    els.unitPrice.textContent = "—";
+    els.totalPrice.textContent = "—";
+    els.roundNote.hidden = true;
+    els.roundNote.textContent = "";
+    els.warnNote.hidden = true;
+    els.warnNote.textContent = "";
+    els.copyBtn.disabled = true;
+    ["rUnit", "rList", "rDisc", "rTotal", "rNet", "rVat"].forEach(function (k) {
+      els[k].textContent = "—";
+    });
+    els.rQty.hidden = true;
+    els.rVatPct.textContent = "";
+  }
+
+  var currentCopy = "";
+
+  function render() {
+    var s = readState();
+    if (!s.valid) { resetOutputs(); return; }
+
+    var unitList = s.mode === "incl" ? s.start : s.start * (1 + s.vat);
+    var listTotal = unitList * s.qty;
+    var unitTarget = s.target / s.qty;
+    var pct = clean((1 - unitTarget / unitList) * 100);
+    var pctText = num(pct, s.decimals);
+    var pctDisplay = pctText.replace("-", "−");
+
+    els.pct.textContent = pctDisplay;
+    els.pct.classList.toggle("is-long", pctDisplay.length > 13);
+    currentCopy = pct.toFixed(s.decimals);
+    els.copyBtn.disabled = false;
+
+    var delta = unitList - unitTarget;
+    els.hint.textContent = delta >= -1e-9
+      ? eur(Math.max(delta, 0), 4) + " di sconto per pezzo sul listino IVato."
+      : eur(-delta, 4) + " di aumento per pezzo sul listino IVato.";
+
+    els.unitPrice.textContent = eur(unitTarget, 4);
+    els.totalPrice.textContent = eur(s.target);
+
+    if (pct < -1e-9) {
+      els.warnNote.hidden = false;
+      els.warnNote.textContent =
+        "Il listino è già sotto il prezzo che vuoi ottenere: qui serve un aumento di " +
+        num(Math.abs(pct), s.decimals) + "%, non uno sconto.";
+    } else {
+      els.warnNote.hidden = true;
+    }
+
+    var rounded = Number(pct.toFixed(s.decimals));
+    var achieved = listTotal * (1 - rounded / 100);
+    var diff = clean(achieved - s.target);
+
+    els.roundNote.hidden = false;
+    var lead = pct < -1e-9
+      ? "Con un aumento di " + num(Math.abs(pct), s.decimals) + "%"
+      : "Con " + pctDisplay + "%";
+    if (Math.abs(diff) < 0.005) {
+      els.roundNote.textContent =
+        lead + " il totale IVato è " + eur(achieved) + ": coincide al centesimo.";
+    } else {
+      els.roundNote.textContent =
+        lead + " il totale IVato è " + eur(achieved) + " (" +
+        sign(diff) + eur(Math.abs(diff), 4) + " di scarto).";
+    }
+
+    // Dettaglio
+    els.modeTag.textContent = s.mode === "incl" ? "IVA incl." : "IVA escl.";
+    els.rUnit.textContent = eur(unitList, 4);
+
+    els.rQty.hidden = s.qty === 1;
+    els.rQty.textContent = "× " + fmtQty.format(s.qty);
+    els.rList.textContent = eur(listTotal);
+
+    var discEuro = listTotal - s.target;
+    var discSign = discEuro < 0 ? "+" : "−";
+    var pctSign = pct < 0 ? "+" : "−";
+    els.rDisc.textContent = pctSign + num(Math.abs(pct), s.decimals) + " % · " +
+      discSign + eur(Math.abs(discEuro)) + (s.qty !== 1 ? " totali" : "");
+
+    els.rTotal.textContent = eur(s.target);
+
+    var net = s.target / (1 + s.vat);
+    els.rNet.textContent = eur(net);
+    els.rVatPct.textContent = s.vatPct ? num(s.vatPct, s.vatPct % 1 === 0 ? 0 : 1) + "%" : "";
+    els.rVat.textContent = eur(s.target - net);
+  }
+
+  var toastTimer = null;
+  function showToast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      els.toast.classList.remove("show");
+    }, 2200);
+  }
+
+  function copyText(text) {
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).catch(fallback);
+    } else {
+      fallback();
+    }
+    showToast("Copiato: " + text.replace(".", ",") + " %");
+  }
+
+  els.copyBtn.addEventListener("click", function () {
+    if (els.copyBtn.disabled) return;
+    copyText(currentCopy);
+  });
+
+  document.addEventListener("input", render);
+  document.addEventListener("change", render);
+
+  render();
+})();
+</script>
+</body>
+</html>
