@@ -34,7 +34,7 @@
   }
   ::selection{background:rgba(0,255,102,.28);color:#fff}
 
-  /* ---------- pioggia di soldi ---------- */
+  /* ---------- golden shower ---------- */
   #rain{
     position:fixed;inset:0;z-index:0;display:block;
     opacity:.62;pointer-events:none;
@@ -485,7 +485,7 @@
 
   <footer>
     <span>// nessuna installazione · nessun tracciamento · solo il conto</span>
-    <button class="ghost" id="rainToggle" type="button" aria-pressed="true">pioggia: ON</button>
+    <button class="ghost" id="rainToggle" type="button" aria-pressed="true">golden shower: ON</button>
   </footer>
 </main>
 
@@ -495,7 +495,7 @@
 (function () {
   "use strict";
 
-  /* ---------------- pioggia di soldi ---------------- */
+  /* ---------------- golden shower ---------------- */
   (function rain() {
     var canvas = document.getElementById("rain");
     var ctx = canvas.getContext("2d", { alpha: false });
@@ -596,7 +596,7 @@
       running = on;
       body.classList.toggle("rain-off", !on);
       if (toggle) {
-        toggle.textContent = "pioggia: " + (on ? "ON" : "OFF");
+        toggle.textContent = "golden shower: " + (on ? "ON" : "OFF");
         toggle.setAttribute("aria-pressed", String(on));
       }
       if (on) {

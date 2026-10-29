@@ -18,7 +18,7 @@ Tutti i calcoli girano nel browser: nessun dato viene inviato da nessuna parte, 
 
 ## Grafica
 
-Pioggia di `€ $ £ ¥ ₿` e cifre su canvas, scanline CRT, pannelli con angoli da terminale. Il pulsante `pioggia: ON/OFF` in basso a destra spegne l'animazione (utile per leggere meglio o risparmiare batteria); con `prefers-reduced-motion` attivo parte già spenta e mostra solo una texture statica.
+Pioggia di `€ $ £ ¥ ₿` e cifre su canvas, scanline CRT, pannelli con angoli da terminale. Il pulsante `golden shower: ON/OFF` in basso a destra spegne l'animazione (utile per leggere meglio o risparmiare batteria); con `prefers-reduced-motion` attivo parte già spenta e mostra solo una texture statica.
 
 ## In locale
 
