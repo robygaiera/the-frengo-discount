@@ -1,5 +1,7 @@
 # THE FRENGO DISCOUNT
 
+**Live:** https://robygaiera.github.io/the-frengo-discount/
+
 Webapp a file singolo (solo `index.html`, zero dipendenze) che calcola la percentuale di sconto esatta — con 2, 4, 6, 8, 10 o 12 decimali — per portare un prezzo IVato a un importo preciso. Grafica stile terminale Matrix, con pioggia di simboli di valuta sullo sfondo.
 
 ## Cosa fa
@@ -24,20 +26,17 @@ Pioggia di `€ $ £ ¥ ₿` e cifre su canvas, scanline CRT, pannelli con angol
 
 Apri `index.html` con doppio clic. Funziona anche da `file://`.
 
-## Pubblicare su GitHub Pages
+## Pubblicazione
+
+Il sito è già online su GitHub Pages: `main` → `root`. Ogni push su `main` aggiorna la pagina dopo circa un minuto.
 
 ```bash
-git init
 git add .
-git commit -m "The Frengo Discount"
-git branch -M main
-git remote add origin https://github.com/TUO-UTENTE/NOME-REPO.git
-git push -u origin main
+git commit -m "modifica"
+git push
 ```
 
-Poi su GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `root` → Save**.
-
-Dopo un minuto il sito è online su `https://TUO-UTENTE.github.io/NOME-REPO/`.
+Per rifare tutto da zero: `gh repo create NOME-REPO --public --source=. --remote=origin --push`, poi **Settings → Pages → Deploy from a branch → `main` / `root`**.
 
 ## Formula
 
