@@ -1,6 +1,6 @@
 # Sconto esatto
 
-Webapp a file singolo (solo `index.html`, zero dipendenze) che calcola la percentuale di sconto esatta — con 2, 4, 6, 8, 10 o 12 decimali — per portare un prezzo IVato a un importo preciso.
+Webapp a file singolo (solo `index.html`, zero dipendenze) che calcola la percentuale di sconto esatta — con 2, 4, 6, 8, 10 o 12 decimali — per portare un prezzo IVato a un importo preciso. Grafica stile terminale Matrix, con pioggia di simboli di valuta sullo sfondo.
 
 ## Cosa fa
 
@@ -15,6 +15,10 @@ Webapp a file singolo (solo `index.html`, zero dipendenze) che calcola la percen
   - il totale che otterresti davvero con quella percentuale, con lo scarto in euro (utile se il gestionale arrotonda lo sconto a 2 decimali).
 
 Tutti i calcoli girano nel browser: nessun dato viene inviato da nessuna parte, nessuna build, nessun server.
+
+## Grafica
+
+Pioggia di `€ $ £ ¥ ₿` e cifre su canvas, scanline CRT, pannelli con angoli da terminale. Il pulsante `pioggia: ON/OFF` in basso a destra spegne l'animazione (utile per leggere meglio o risparmiare batteria); con `prefers-reduced-motion` attivo parte già spenta e mostra solo una texture statica.
 
 ## In locale
 
