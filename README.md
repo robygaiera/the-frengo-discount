@@ -1,4 +1,4 @@
-# Sconto esatto
+# THE FUCKING DISCOUNT
 
 Webapp a file singolo (solo `index.html`, zero dipendenze) che calcola la percentuale di sconto esatta — con 2, 4, 6, 8, 10 o 12 decimali — per portare un prezzo IVato a un importo preciso. Grafica stile terminale Matrix, con pioggia di simboli di valuta sullo sfondo.
 
@@ -29,7 +29,7 @@ Apri `index.html` con doppio clic. Funziona anche da `file://`.
 ```bash
 git init
 git add .
-git commit -m "Calcolatore sconto esatto"
+git commit -m "The Fucking Discount"
 git branch -M main
 git remote add origin https://github.com/TUO-UTENTE/NOME-REPO.git
 git push -u origin main
