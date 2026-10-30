@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>THE FRENGO DISCOUNT // calcolatore prezzo IVato</title>
 <meta name="description" content="Calcola la percentuale di sconto esatta, con tutti i decimali che vuoi, per portare un prezzo IVato a un importo preciso. In stile terminale." />
-<meta name="theme-color" content="#001a0a" />
+<meta name="theme-color" id="themeColor" content="#001a0a" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23000'/%3E%3Ctext x='32' y='45' font-family='monospace' font-size='34' font-weight='700' fill='%2300ff66' text-anchor='middle'%3E%25%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
 <style>
   :root{
     --bg:#000;
@@ -314,6 +317,7 @@
     gap:14px;flex-wrap:wrap;
     font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#3f7857;
   }
+  .footer-actions{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px}
   .ghost{
     background:none;border:1px solid rgba(0,255,102,.3);color:var(--muted);
     font:600 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
@@ -338,10 +342,303 @@
     *{transition:none !important;animation:none !important}
     .big-cursor{opacity:.85}
   }
+
+  /* ======================================================================
+     PS5 PIXEL THEME (switch in the footer) — palette, pixel type and the
+     night-city backdrop are the ones from the PS5 jailbreak tracker.
+     ====================================================================== */
+  #pixel{
+    position:fixed;inset:0;z-index:0;display:none;
+    width:100%;height:100%;pointer-events:none;
+    image-rendering:pixelated;
+  }
+  .ps-buttons{display:none}
+
+  body.theme-ps5{
+    --bg:#0b0b14;
+    --bg-deep:#06060c;
+    --panel:#101022;
+    --panel-2:#101022;
+    --panel-solid:#101022;
+    --panel-raised:#181833;
+    --text:#ecebff;
+    --text-bright:#ffffff;
+    --muted:#a9a8cf;
+    --line:#2a2a52;
+    --line-strong:#5aa9ff;
+    --accent:#2de2e6;
+    --accent-dim:#5aa9ff;
+    --warn:#ffd23f;
+    --mono:"VT323",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --pixel:"Press Start 2P","Courier New",monospace;
+    color:var(--text);
+    font-size:19px;
+    background:
+      radial-gradient(ellipse at 50% -10%,rgba(0,112,209,.22),transparent 60%),
+      radial-gradient(ellipse at 100% 110%,rgba(255,62,165,.12),transparent 55%),
+      var(--bg);
+  }
+  body.theme-ps5 #rain{display:none}
+  body.theme-ps5 #pixel{display:block}
+  body.theme-ps5 #rainToggle{display:none}
+  body.theme-ps5 .veil{display:none}
+  body.theme-ps5 .scanlines{
+    opacity:.26;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,.5) 0 2px,transparent 2px 4px);
+  }
+  body.theme-ps5 ::selection{background:#ff3ea5;color:#06060c}
+  body.theme-ps5 :focus-visible{outline:3px solid #ffd23f;outline-offset:3px}
+  body.theme-ps5 input:focus-visible,
+  body.theme-ps5 select:focus-visible{outline:none}
+
+  /* header */
+  body.theme-ps5 .term{display:none}
+  body.theme-ps5 .ps-buttons{
+    display:flex;justify-content:center;gap:12px;margin:0 0 18px;
+  }
+  body.theme-ps5 .ps-buttons svg{width:18px;height:18px}
+  body.theme-ps5 .ps-buttons [data-b="triangle"]{color:#40e0b0}
+  body.theme-ps5 .ps-buttons [data-b="circle"]{color:#ff5a6e}
+  body.theme-ps5 .ps-buttons [data-b="cross"]{color:#5aa9ff}
+  body.theme-ps5 .ps-buttons [data-b="square"]{color:#ff8ad8}
+  body.theme-ps5 header{text-align:center}
+  body.theme-ps5 header h1{
+    font-family:var(--pixel);
+    font-size:clamp(21px,4.4vw,38px);
+    line-height:1.35;
+    font-weight:400;
+    letter-spacing:0;
+    text-transform:uppercase;
+    color:#fff;
+    text-shadow:4px 4px 0 #0070d1,8px 8px 0 rgba(0,0,0,.6),0 0 24px rgba(0,112,209,.7);
+  }
+  body.theme-ps5 header h1 .dim{
+    display:block;margin-top:10px;
+    font-size:.52em;letter-spacing:.08em;
+    color:#ff3ea5;opacity:1;
+    text-shadow:3px 3px 0 #3a0a2a,0 0 16px rgba(255,62,165,.55);
+  }
+  body.theme-ps5 .lede{
+    margin:0 auto;max-width:62ch;
+    font-size:20px;line-height:1.4;color:var(--muted);
+  }
+  body.theme-ps5 .lede .tag-inline{color:var(--cyan)}
+
+  /* panels: hard 4px pixel frame + striped cartridge top */
+  body.theme-ps5 .panel{
+    --pb:#0070d1;
+    padding:24px;
+    background:var(--panel);
+    border:0;border-radius:0;
+    box-shadow:
+      0 -4px 0 0 var(--pb),
+      0 4px 0 0 var(--pb),
+      -4px 0 0 0 var(--pb),
+      4px 0 0 0 var(--pb),
+      6px 8px 0 0 rgba(0,0,0,.55);
+  }
+  body.theme-ps5 .panel::before{
+    content:"";position:absolute;inset:0 0 auto;
+    width:auto;height:4px;border:0;opacity:.8;
+    background:repeating-linear-gradient(90deg,var(--accent) 0 12px,transparent 12px 16px);
+    pointer-events:none;
+  }
+  body.theme-ps5 .panel::after{display:none}
+  body.theme-ps5 .result{--pb:#3df58a;border-color:transparent}
+  body.theme-ps5 .result::before{
+    background:repeating-linear-gradient(90deg,#3df58a 0 12px,transparent 12px 16px);
+  }
+
+  /* form */
+  body.theme-ps5 .form-grid{gap:18px}
+  body.theme-ps5 .field{gap:8px}
+  body.theme-ps5 .field > label{
+    font-family:var(--pixel);
+    font-size:9px;line-height:1.7;letter-spacing:.04em;
+    color:var(--cyan);
+  }
+  body.theme-ps5 .field > label .hint{
+    font-family:var(--mono);
+    font-size:16px;line-height:1;letter-spacing:0;
+    text-transform:none;color:#9e9dcc;
+  }
+  body.theme-ps5 input[type="text"],
+  body.theme-ps5 select{
+    height:52px;
+    border:2px solid var(--line);border-radius:0;
+    background:var(--bg-deep);
+    color:#fff;font-size:21px;
+    caret-color:var(--cyan);
+    box-shadow:inset 0 0 0 2px var(--bg-deep);
+  }
+  body.theme-ps5 input[type="text"]:hover,
+  body.theme-ps5 select:hover{border-color:#3a3a6a}
+  body.theme-ps5 input[type="text"]:focus,
+  body.theme-ps5 select:focus{
+    border-color:var(--cyan);
+    background:var(--bg-deep);
+    box-shadow:0 0 0 3px rgba(45,226,230,.18);
+  }
+  body.theme-ps5 .control .affix{font-size:19px;color:var(--cyan)}
+  body.theme-ps5 .control.select::after{border-color:var(--cyan)}
+  body.theme-ps5 select option{background:#101022;color:#ecebff}
+
+  body.theme-ps5 .seg{
+    height:52px;padding:4px;gap:4px;
+    border:2px solid var(--line);border-radius:0;
+    background:var(--bg-deep);
+  }
+  body.theme-ps5 .seg label{
+    border-radius:0;
+    font-family:var(--pixel);
+    font-size:8px;letter-spacing:.03em;
+    color:var(--muted);
+  }
+  body.theme-ps5 .seg input:checked + label{
+    background:#0070d1;color:#fff;text-shadow:none;
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.35),inset 3px 3px 0 rgba(255,255,255,.15);
+  }
+  body.theme-ps5 .seg input:focus-visible + label{box-shadow:0 0 0 3px #ffd23f}
+
+  /* result */
+  body.theme-ps5 .result-label{
+    font-family:var(--pixel);
+    font-size:9px;letter-spacing:.06em;color:var(--cyan);
+  }
+  body.theme-ps5 .copy{
+    border:0;border-radius:0;
+    background:#181833;color:var(--cyan);
+    font-family:var(--pixel);font-size:9px;letter-spacing:.04em;
+    padding:10px 12px;
+    box-shadow:
+      0 -3px 0 0 var(--cyan),0 3px 0 0 var(--cyan),
+      -3px 0 0 0 var(--cyan),3px 0 0 0 var(--cyan),
+      inset -3px -3px 0 rgba(0,0,0,.35);
+  }
+  body.theme-ps5 .copy:hover:not(:disabled){
+    background:var(--cyan);color:var(--bg-deep);
+    box-shadow:0 0 0 3px rgba(45,226,230,.25);
+  }
+  body.theme-ps5 .copy:disabled{opacity:.4}
+  body.theme-ps5 .big{min-height:64px}
+  body.theme-ps5 .big-value{
+    font-family:var(--mono);
+    font-size:clamp(46px,9vw,64px);
+    letter-spacing:0;
+    color:#3df58a;
+    text-shadow:0 0 18px rgba(61,245,138,.45);
+  }
+  body.theme-ps5 .big-value.is-long{font-size:clamp(26px,5vw,38px)}
+  body.theme-ps5 .big-unit{
+    font-family:var(--pixel);
+    font-size:18px;color:#3df58a;
+  }
+  body.theme-ps5 .big-cursor{
+    width:.42em;height:.85em;background:#ffd23f;
+  }
+  body.theme-ps5 .result-hint{font-size:19px;color:var(--muted)}
+  body.theme-ps5 .chips{gap:12px}
+  body.theme-ps5 .chip{
+    background:var(--bg-deep);
+    border:0;border-radius:0;
+    box-shadow:0 0 0 2px var(--line);
+    padding:12px 14px;
+  }
+  body.theme-ps5 .chip span{
+    font-family:var(--pixel);
+    font-size:8px;letter-spacing:.04em;color:var(--cyan);
+  }
+  body.theme-ps5 .chip strong{font-size:21px;color:#fff}
+  body.theme-ps5 .note{
+    border-left:4px solid var(--cyan);
+    border-radius:0;
+    background:rgba(45,226,230,.08);
+    color:var(--text);font-size:18px;padding:10px 13px;
+  }
+  body.theme-ps5 .note.warn{
+    border-left-color:#ffd23f;
+    background:rgba(255,210,63,.08);
+    color:#ffe9a8;
+  }
+
+  /* detail rows */
+  body.theme-ps5 .details h2{
+    font-family:var(--pixel);
+    font-size:10px;letter-spacing:.06em;color:var(--cyan);
+  }
+  body.theme-ps5 .rows > div{border-bottom:2px dashed var(--line)}
+  body.theme-ps5 .rows dt{font-size:18px;color:var(--muted)}
+  body.theme-ps5 .rows dd{font-size:20px;color:#fff}
+  body.theme-ps5 .rows .strong dt{color:#fff}
+  body.theme-ps5 .rows .strong dd{
+    color:#3df58a;text-shadow:0 0 12px rgba(61,245,138,.4);
+  }
+  body.theme-ps5 .tag{
+    border:2px solid var(--line);border-radius:0;
+    color:var(--cyan);font-family:var(--pixel);
+    font-size:8px;letter-spacing:.03em;padding:2px 5px;
+  }
+
+  /* how it works */
+  body.theme-ps5 .how{padding:0}
+  body.theme-ps5 .how summary{
+    padding:20px 24px;
+    font-family:var(--pixel);
+    font-size:10px;letter-spacing:.04em;color:var(--cyan);
+  }
+  body.theme-ps5 .how summary::before{color:var(--magenta);font-size:18px}
+  body.theme-ps5 .how-body{
+    padding:0 24px 22px;
+    color:var(--muted);font-size:19px;line-height:1.5;
+  }
+  body.theme-ps5 .how-body pre{
+    background:var(--bg-deep);
+    border:2px dashed var(--line);
+    border-left:4px solid var(--cyan);
+    border-radius:0;
+  }
+  body.theme-ps5 .how-body code{font-size:17px;color:#fff}
+
+  /* footer + toast */
+  body.theme-ps5 footer{
+    margin-top:34px;
+    font-family:var(--pixel);
+    font-size:8px;line-height:1.9;letter-spacing:.04em;
+    color:#8f8ebd;
+  }
+  body.theme-ps5 .ghost{
+    border:2px solid var(--line);border-radius:0;
+    background:var(--panel-solid);
+    color:var(--muted);
+    font-family:var(--pixel);
+    font-size:8px;letter-spacing:.04em;
+    padding:10px 12px;
+    box-shadow:3px 3px 0 rgba(0,0,0,.5);
+  }
+  body.theme-ps5 .ghost:hover{
+    color:var(--cyan);border-color:var(--cyan);
+    box-shadow:0 0 0 2px rgba(45,226,230,.25),3px 3px 0 rgba(0,0,0,.5);
+  }
+  body.theme-ps5 .toast{
+    border:0;border-radius:0;
+    background:#101022;color:#fff;
+    font-family:var(--pixel);font-size:9px;letter-spacing:.03em;
+    box-shadow:0 0 0 3px var(--cyan),6px 6px 0 rgba(0,0,0,.5);
+  }
+
+  @media (max-width:540px){
+    body.theme-ps5 header h1{font-size:clamp(17px,6vw,24px)}
+    body.theme-ps5 .big-value{font-size:clamp(38px,11vw,50px)}
+    body.theme-ps5 .big-value.is-long{font-size:clamp(22px,6vw,30px)}
+    body.theme-ps5 .panel{padding:18px}
+    body.theme-ps5 .how summary{padding:16px 18px}
+    body.theme-ps5 .how-body{padding:0 18px 18px}
+  }
 </style>
 </head>
 <body>
 <canvas id="rain" aria-hidden="true"></canvas>
+<canvas id="pixel" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
 <div class="scanlines" aria-hidden="true"></div>
 
@@ -351,6 +648,12 @@
       <span class="term-user">guest@discount</span><span>:</span><span class="term-path">~</span><span>$</span>
       <span class="term-cmd">./the_frengo_discount</span>
       <span class="term-cursor" aria-hidden="true">▊</span>
+    </div>
+    <div class="ps-buttons" aria-hidden="true">
+      <svg data-b="triangle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 4 21 19H3Z"></path></svg>
+      <svg data-b="circle" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="8"></circle></svg>
+      <svg data-b="cross" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 5 19 19M19 5 5 19"></path></svg>
+      <svg data-b="square" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4.5" y="4.5" width="15" height="15"></rect></svg>
     </div>
     <h1>THE FRENGO <span class="dim">DISCOUNT</span></h1>
     <p class="lede">Trova la percentuale di sconto <span class="tag-inline">— con quanti decimali vuoi —</span> che porta il totale IVato esattamente al prezzo che hai in testa. Tutto in locale, niente server, niente tracciamento.</p>
@@ -485,11 +788,20 @@
 
   <footer>
     <span>// nessuna installazione · nessun tracciamento · solo il conto</span>
-    <button class="ghost" id="rainToggle" type="button" aria-pressed="true">golden shower: ON</button>
+    <span class="footer-actions">
+      <button class="ghost" id="themeToggle" type="button" aria-pressed="false">grafica: terminal</button>
+      <button class="ghost" id="rainToggle" type="button" aria-pressed="true">golden shower: ON</button>
+    </span>
   </footer>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- PS5 pixel backdrop: sprites + scenery from the tracker design, bundled inline
+     so the app stays a single file (source: ../ps5/grafica-static/tools/frengo-pixel.js). -->
+<script>
+(()=>{var Go={o:"#2b2140",e:"#120e1c",w:"#ece8f4",s:"#e3a982",p:"#ef8f9f",g:"#565a78",y:"#ffd166"},$=[["...odo.odo..","..odo...odo.","..oo.....oo."],["....oddo....","....oddo....","....oooo...."]],qo={name:"gamer",frames:[$[0],$[1]].map(o=>["....oooo....","...oaaaaoo..","..oaaaaaaaoo","..okkkkoooo.","..okksesseo.","..okssssso..","...osssspo..","....ossso...","...occccco..","..occcccco..","..ocsggggso.","...oglgygo..","...occcco...",...o]),palettes:[{a:"#e05561",k:"#5b3a29",c:"#3f7fd0",d:"#2f3a5c"},{a:"#3fb68b",k:"#2a2a35",c:"#e8a33d",d:"#3b3350",s:"#b97a56"},{a:"#8a63d2",k:"#d9a441",c:"#e05561",d:"#2a3f5f"},{a:"#2f9fd8",k:"#7a3b2e",c:"#58b368",d:"#433a5e",s:"#8d5a3b"}]},Uo={name:"robot",frames:[["..odo...odo.","..oo....oo.."],["...odo.odo..","...oo..oo..."]].map(o=>[".....oo.....",".....ol.....","......o.....","..oooooooo..",".oaaaaaaaao.",".oacccccaao.",".oacwcwcaao.",".oacccccaao.",".oaaaaaaaao.","..oooooooo..",".oobbbbbboo.","oaobblbybboa","oaobbbbbboao","..obbbbbbo..","..oooooooo..",...o]),palettes:[{a:"#9aa3b8",b:"#6b7390",c:"#1d3b4f",l:"#ff5d73",d:"#4b5068"},{a:"#d9b45a",b:"#a3803a",c:"#26203a",l:"#5ee6c5",d:"#6b5530"},{a:"#7fc4a8",b:"#4f8f78",c:"#1b2e3a",l:"#ffd166",d:"#3d6458"},{a:"#c58ad8",b:"#8f5aa3",c:"#221836",l:"#7bdff2",d:"#5c3d6b"}]},Xo={name:"ghost",frames:[["oaaaaaaaaaao","oaaobaaobaao","oaoo.oao.ooo",".o....o....."],["oaaaaaaaaaao","oabaaobaaobo","ooo.oao.ooao",".....o....o."]].map(o=>["....oooo....","..ooaaaaoo..",".oaaaaawwao.",".oaaaaaawao.","oaaaaaaaaaao","oaaaaeaaeaao","oaaaaeaaeaao","oaaapaaaapao","oaaaaaeeaaao","oaaaaaaaaaao","obaaaaaaaaao","obbaaaaaaabo",...o]),palettes:[{a:"#d8d4ec",b:"#a9a3c9"},{a:"#a8e6cf",b:"#76b39d"},{a:"#ffc7d6",b:"#d993a8"},{a:"#b8d8ff",b:"#82a6d6"}]},Ho={name:"cat",frames:[[".oao.oao...oao.oao",".oo...oo...oo...oo"],["..oao.oao.oao.oao.","..oo...oo.oo...oo."]].map(o=>["............o...o.","..o........opo.opo",".oao.......oaaaaao",".oao.......oaeaeao","..oao......oaapaao","...oaoooooooaaaao.","...oaababababaaao.","...oaaaaaaaaaaao..","...obaaaaaaaaabo..","...oobbbbbbbbboo..",...o.map(a=>a.slice(0,18))]),palettes:[{a:"#e8a35b",b:"#b8743a"},{a:"#8d8fa3",b:"#5f6177"},{a:"#f0e6d8",b:"#c4b49c"},{a:"#3d3550",b:"#272035",e:"#ffd166"}]},Oo={name:"knight",frames:[$[0],$[1]].map(o=>[".....cc.....","....occo....","...oaaaao...","..oaaaaaao..","..oaaaaaaao.","..oaaaeeeeo.","..oaaaaaaao.","...oaaaaao..","..obbbbbbo..",".oabbbbodddo",".oabbbbodcdo","..obbbbodddo","..obbbbbodo.","...oooooo...",...o.map(a=>a.replace(/d/g,"b"))]),palettes:[{a:"#b9c0d4",b:"#8a92aa",c:"#e05561",d:"#3f7fd0"},{a:"#d9b45a",b:"#a3803a",c:"#5ee6c5",d:"#8a3b4f"},{a:"#9aa3b8",b:"#6b7390",c:"#ffd166",d:"#3a8f5c"},{a:"#c9a2e0",b:"#9a72b3",c:"#7bdff2",d:"#5c3d8f"}]},Ko={name:"slime",frames:[["............","............",".....oo.....","...ooaaoo...","..oaawaaao..",".oaawaaaaao.",".oaaaeaeaao.","oaaaaaaaaaao","oaaapaaapaao","obaaaaaaaabo","obbaaaaaabbo",".oooooooooo."],["............","............","............","............","....oooo....","..ooaaaaoo..",".oaawaaaaao.","oaawaeaeaaao","oaaapaaapaao","obaaaaaaaabo","obbbaaaaabbo","oooooooooooo"]],palettes:[{a:"#6fd08c",b:"#3f9a5f"},{a:"#5aa9e6",b:"#3a74b0"},{a:"#f28fb0",b:"#c25f83"},{a:"#f2c14e",b:"#c28f2a"}]},Vo={name:"mage",frames:[["...odo.odo..","...oo...oo.."],["....oddo....","....oooo...."]].map(o=>["......o.....",".....oao....",".....oayo...","....oaaao...","...oaaaaao..",".ooooooooooo","..okssesso..","..okssssso..","..owwwwwwo..","..oawwwwaoo.",".oaaawwaaosl",".oaaaaaaaosg",".oaaabaaao.g","..oaaaaaao.g",...o]),palettes:[{a:"#5b4bd1",b:"#ffd166",k:"#e8e6f0",d:"#2f2a55",l:"#7bdff2"},{a:"#c0392b",b:"#ffd166",k:"#e8e6f0",d:"#4a1f1a",l:"#ffd166"},{a:"#2e8b6e",b:"#e8e6f0",k:"#e8e6f0",d:"#1f4a3c",l:"#ff8fab"},{a:"#8e44ad",b:"#5ee6c5",k:"#e8e6f0",d:"#3d1f4a",l:"#5ee6c5"}]},W=[qo,Uo,Xo,Ho,Oo,Ko,Vo],ia=Math.max(...W.flatMap(o=>o.frames.map(a=>a.length)));function yo(o,a,t,f){let c=o.frames[t],n=Math.max(...c.map(d=>d.length)),s={...Go,...o.palettes[a%o.palettes.length]},e=document.createElement("canvas");e.width=n,e.height=c.length;let r=e.getContext("2d");return c.forEach((d,u)=>{for(let x=0;x<d.length;x++){let g=s[d[x]];g&&(r.fillStyle=g,r.fillRect(f?n-1-x:x,u,1,1))}}),e}var To=[.5,.75,1],bo=[.5,.75,1],fo="#9e9dcc",ho="#0070d1",H="#5aa9ff",X="#2de2e6",Lo="#ff3ea5",Eo="#ffd23f",Jo="#2a2a52",Qo=[{top:"#202048",body:"#16162f",dark:"#0f0f22",spark:X,sparkA:.18},{top:"#2b2b5e",body:"#1b1b3c",dark:"#121229",spark:X,sparkA:.26},{top:"#3a3a7c",body:"#222249",dark:"#15152f",spark:Lo,sparkA:.34}],Zo=[{color:"#40e0b0",nodes:[[0,4],[2,0],[4,4]],closed:!0},{color:"#ff5a6e",nodes:[[2,0],[3.4,.6],[4,2],[3.4,3.4],[2,4],[.6,3.4],[0,2],[.6,.6]],closed:!0},{color:H,nodes:[[0,0],[2,2],[4,4]],closed:!1,extra:[[4,0],[2,2],[0,4]]},{color:"#ff8ad8",nodes:[[0,0],[4,0],[4,4],[0,4]],closed:!0}];function $o(o){return()=>{o=o+1831565813|0;let a=Math.imul(o^o>>>15,1|o);return a=a+Math.imul(a^a>>>7,61|a)^a,((a^a>>>14)>>>0)/4294967296}}var y=(o,a)=>Math.round(o/a)*a,io=(o,a)=>a.some(t=>o.x<t.x+t.w&&o.x+o.w>t.x&&o.y<t.y+t.h&&o.y+o.h>t.y);function b(o,a,t,f,c,n,s=1){o.globalAlpha=s,o.fillStyle=n,o.fillRect(a,t,f,c)}function Ao(o,a){let t=document.createElement("canvas");t.width=o,t.height=a;let f=t.getContext("2d");return f.imageSmoothingEnabled=!1,{cv:t,c:f}}function Io(o,a,t,f){o=Math.max(1,Math.round(o)),a=Math.max(1,Math.round(a)),t=Math.max(1,Math.round(t));let c=$o((f^Math.imul(o,73856093)^Math.imul(a,19349663))>>>0),n=(l,i)=>l+c()*(i-l),s=(l,i)=>Math.floor(n(l,i+1)),e=bo.map(l=>Math.max(1,Math.round(t*l))),r=typeof window<"u"&&window.devicePixelRatio>0?window.devicePixelRatio:1,d=o/r,u=d<640,x=(Math.min(d,1240)/2-16)*r,g=Math.max(0,o/2-x),I=g>=110*r,_=Ao(o,a),m=Ao(o,a),M=_.c,z=m.c,B=y(Math.max(4*t,a*.035),t),E=a-B,q=y(a*(u?.11:.15),t),P=E-q,D=[],so=[],F=(u?6:8)*e[1],Mo=c()<.5,go=y(u?o*.84:I?Mo?g/2:o-g/2:Mo?o*.07:o*.93,e[1]),lo=y(Math.max(F+4*t,a*.08),e[1]);D.push({x:go-F*2,y:lo-F-2*t,w:F*4,h:F*2+4*t});let ro=[],U=(l,i,k,w,h,T)=>{let p=e[w],A=Math.floor((i-l)/p),v=Math.max(20,Math.min(s(h,T),A)),S=y(n(l,Math.max(l,i-v*p)),p),C=y(k,p),Z={x:S-2*p,y:C-20*p,w:(v+4)*p,h:30*p};if(io(Z,D))return;D.push(Z),ro.push({x:S,y:C,w:v,d:w});let xo=Math.max(0,S+2*p),ko=Math.min(o,S+(v-2)*p);ko-xo>=14*p&&so.push({x0:xo,x1:ko,y:C,depth:w})},J=lo+F+10*t,Q=P-6*t;if(u)U(o*.03,o*.45,a*n(.08,.13),1,28,40),U(o*.55,o*.97,J+a*n(0,.02),0,34,50),U(o*.02,o*.42,Q-a*n(0,.05),2,24,34),U(o*.58,o*.98,Q-a*n(.09,.15),1,28,40);else{let l=I?g-8*r:Math.max(g,140*r),i=I?Math.max(2,Math.min(5,Math.round((Q-J)/(170*r)))):2,k=[2,0,1,2,1,0],w=[[34,56],[30,46],[26,38]];for(let h=0;h<2;h++){let T=h===0?0:o-l,p=h===0?l:o;for(let A=0;A<i;A++){let v=(A+(h?.45:0)+n(.05,.5))/(i+.5),S=k[(A+h*2)%k.length];U(T,p,J+v*(Q-J),S,w[S][0],w[S][1])}}}ro.sort((l,i)=>l.d-i.d);let wo=[],po=[fo,fo,fo,H,X,"#ecebff"],No=Math.round(o/t*(P/t)/650);for(let l=0;l<No;l++){let i=c()<.85?e[0]:e[1],k=y(n(0,o-i),e[0]),w=y(n(0,P-6*t),e[0]);if(io({x:k-i,y:w-i,w:i*3,h:i*3},D))continue;let h={x:k,y:w,s:i,color:po[s(0,po.length-1)],base:n(.16,.42),rate:n(.4,1.3),off:n(0,4),plus:c()<.035};h.plus&&(h.base=n(.3,.5)),(h.plus?c()<.6:c()<.14)?wo.push(h):So(M,h,h.base)}{let l=4*e[1],i=l*4+e[1],k=[0,1,2,3].sort(()=>c()-.5),w=[];for(let h of k)for(let T=0;T<30;T++){let p=c()<.5,A=u?n(0,o-i):I?p?n(8*r,Math.max(8*r,g-i-8*r)):n(o-g+8*r,Math.max(o-g+8*r,o-i-8*r)):p?n(0,o*.12):n(o*.88-i,o-i),v=n(a*.04,P-i-8*t),S={x:y(A,e[1]),y:y(v,e[1]),w:i,h:i};if(!io({x:S.x-4*t,y:S.y-4*t,w:i+8*t,h:i+8*t},[...D,...w])){w.push(S),Wo(M,Zo[h],S.x,S.y,l,e);break}}D.push(...w)}oa(M,go,lo,F,e[1]);for(let l=-s(0,6)*e[0];l<o;){let i=s(5,14)*e[0],k=y(n(.35,1)*q,e[0]);if(b(M,l,E-k,i,k,"#11112a"),c()<.18&&b(M,l+y(i/2,e[0]),E-k-3*e[0],e[0],3*e[0],"#11112a"),c()<.5)for(let w=E-k+2*e[0];w<E-2*e[0];w+=3*e[0])for(let h=l+e[0];h<l+i-e[0];h+=2*e[0])c()<.05&&b(M,h,w,e[0],e[0],c()<.6?Eo:X,.14);l+=i+(c()<.2?s(1,4)*e[0]:0)}for(let l=-s(0,8)*e[1];l<o;){let i=s(6,16)*e[1],k=y(n(.2,.62)*q,e[1]),w=E-k;b(M,l,w,i,k,"#0c0c1d"),b(M,l,w,i,e[1],"#1a1a3a"),c()<.25&&b(M,l+e[1],w-2*e[1],2*e[1],2*e[1],"#0c0c1d");for(let h=w+2*e[1];h<E-2*e[1];h+=3*e[1])for(let T=l+e[1];T<l+i-e[1];T+=2*e[1])if(c()<.1){let p=c();b(M,T,h,e[1],e[1],p<.6?Eo:p<.85?X:Lo,p<.6?.22:.17)}l+=i+(c()<.3?s(1,5)*e[1]:0)}b(M,0,E,o,B,"#07070e");for(let l=0;l<o;l+=t)b(M,l,E,t,t,l/t%6<3?Jo:"#333366"),c()<.08&&b(M,l,E+t*s(2,3),t,t,"#121228");b(M,0,E+t,o,t,ho,.16),so.push({x0:0,x1:o,y:E,depth:2});for(let l of ro)aa(M,z,l.x,l.y,l.w,l.d,e[l.d],c);for(let l=s(0,6)*t;l<o;l+=s(5,12)*t){let i=c()<.3?2:1;b(z,l,E-i*t,t,i*t,c()<.5?"#1f5a6a":"#24407a",.55),c()<.4&&b(z,l+t,E-t,t,t,"#1f5a6a",.45)}M.globalAlpha=1,z.globalAlpha=1;let j={period:n(14,22),off:n(0,10),x:n(o*.15,o*.85),y:n(a*.04,Math.max(a*.05,P*.35)),dir:c()<.5?1:-1,len:70*e[0]};return{platforms:so,drawBack(l,i,k){l.drawImage(_.cv,0,0);let w=[.25,.6,1,.6];for(let h of wo){let T=k?h.base*1.7*w[Math.floor(i*h.rate+h.off)%4]:h.base;So(l,h,Math.min(.85,T))}if(k){let h=(i+j.off)%j.period,T=.75;if(h<T){let p=h/T,A=e[0],v=y(j.x+j.dir*p*j.len,A),S=y(j.y+p*j.len*.45,A);for(let C=0;C<10;C++){let Z=(1-C/10)*.55*(1-p*.6);b(l,v-j.dir*C*A*2,S-y(C*A*.9,A),A*2,A,C?H:"#ecebff",Z)}}}l.globalAlpha=1},drawFront(l){l.drawImage(m.cv,0,0)}}}function So(o,a,t){if(b(o,a.x,a.y,a.s,a.s,a.color,t),a.plus){let f=a.s;b(o,a.x-f,a.y,f,f,a.color,t*.45),b(o,a.x+f,a.y,f,f,a.color,t*.45),b(o,a.x,a.y-f,f,f,a.color,t*.45),b(o,a.x,a.y+f,f,f,a.color,t*.45)}}function Wo(o,a,t,f,c,n){let s=[a.nodes,...a.extra?[a.extra]:[]];for(let e of s){let r=e.length-(a.closed?0:1);for(let d=0;d<r;d++){let[u,x]=e[d],[g,I]=e[(d+1)%e.length],_=t+u*c,m=f+x*c,M=t+g*c,z=f+I*c,B=Math.max(Math.abs(M-_),Math.abs(z-m))/n[0];for(let E=2;E<B-1;E+=2){let q=y(_+(M-_)*E/B,n[0]),P=y(m+(z-m)*E/B,n[0]);b(o,q,P,n[0],n[0],a.color,.1)}}for(let[d,u]of e){let x=y(t+d*c,n[0]),g=y(f+u*c,n[0]);b(o,x-n[0],g-n[0],n[1]+n[0],n[1]+n[0],a.color,.1),b(o,x,g,n[0],n[0],a.color,.42)}}}function oa(o,a,t,f,c){let n=f/c,s=(r,d)=>{let u=r*.94+d*.34,x=-r*.34+d*.94,g=(u/(n*1.85))**2+(x/(n*.42))**2;return g>.78&&g<1},e=Math.ceil(n*2);for(let r=-e;r<=e;r++)for(let d=-e;d<=e;d++)s(d,r)&&-d*.34+r*.94<0&&b(o,a+d*c,t+r*c,c,c,ho,.28);for(let r=-Math.ceil(n);r<=n;r++)for(let d=-Math.ceil(n);d<=n;d++){if(d*d+r*r>n*n)continue;let u=(d-n*.45)**2+(r-n*.3)**2<(n*.95)**2,x=Math.abs(r+Math.round(n*.25))<1||Math.abs(r-Math.round(n*.45))<1,g=u?"#121230":"#262e66";!u&&x&&(g="#1e2557"),u&&x&&(g="#10102a"),b(o,a+d*c,t+r*c,c,c,g)}for(let r=-e;r<=e;r++)for(let d=-e;d<=e;d++)s(d,r)&&-d*.34+r*.94>=0&&b(o,a+d*c,t+r*c,c,c,H,.3);o.globalAlpha=1}function aa(o,a,t,f,c,n,s,e){let r=Qo[n],d=(m,M)=>m+Math.floor(e()*(M-m+1));b(o,t+2*s,f+4*s,(c-4)*s,s,ho,.05+n*.03),b(o,t+s,f,(c-2)*s,s,r.top),b(o,t,f+s,c*s,2*s,r.body),b(o,t+s,f+3*s,(c-2)*s,s,r.dark);for(let m=2;m<c-2;m+=d(3,7))b(o,t+m*s,f,s,s,H,.18+n*.08);for(let m=1;m<c-1;m+=d(3,6))b(o,t+m*s,f+(1+m%2)*s,s,s,r.dark);let u=1,x=1,g=d(3,5),I=f+4*s;for(let m=0;m<g&&u+x<c-4;m++)u+=d(1,3),x+=d(1,3),b(o,t+u*s,I,(c-u-x)*s,s,r.dark),e()<.6&&b(o,t+(u+d(0,Math.max(0,c-u-x-1)))*s,I,s,s,r.body),I+=s;let _=d(1,2+n);for(let m=0;m<_;m++){let M=t+d(u,Math.max(u,c-x-1))*s;b(o,M,I,s,d(1,2)*s,r.spark,r.sparkA)}if(o.globalAlpha=1,n>0){for(let m=d(1,4);m<c-1;m+=d(4,9)){let M=e()<.35?2:1;b(a,t+m*s,f-M*s,s,M*s,n===2?"#2a7a6a":"#24506a",n===2?.6:.45),e()<.5&&b(a,t+(m+1)*s,f-s,s,s,n===2?"#1f5a5a":"#203f5a",.5)}a.globalAlpha=1}}var ta=14,ea=1e3/12,na=2560*1600,ca=1410,vo=4,sa=.06,Co=window.matchMedia("(prefers-reduced-motion: reduce)"),O=(o,a)=>o+Math.random()*(a-o),_o=(o,a,t)=>o<a?a:o>t?t:o,N=null,R=null,ao=0,to=0,oo=1,eo=4,K=null,L=[],G=[],mo=[],no=0,co=0,V=0,Y=!1,jo=(o,a)=>{let t=((o.sprite*vo+o.palette)*2+a)*2+(o.dir<0?1:0);return mo[t]??(mo[t]=yo(W[o.sprite],o.palette,a,o.dir<0))},zo=o=>Math.max(1,Math.round(eo*bo[o]));function Po(o){let a=jo(o,0),t=L[o.plat];o.cell=zo(t.depth),o.w=a.width*o.cell,o.h=a.height*o.cell,o.lo=t.x0,o.hi=Math.max(t.x0,t.x1-o.w),o.x=_o(o.x,o.lo,o.hi)}function la(){let o=-1,a=1/0;for(let t=0;t<L.length;t++){let f=(L[t].x1-L[t].x0)/(12*zo(L[t].depth)*3);if(f<.35)continue;let c=1/f+Math.random()*.35;c<a&&(a=c,o=t)}return o<0?Math.floor(Math.random()*L.length):o}function ra(o){let a={sprite:Math.floor(Math.random()*W.length),palette:Math.floor(Math.random()*vo),x:0,plat:0,dir:Math.random()<.5?1:-1,speed:O(6,14),mode:"walk",timer:O(2,7),jump:0,age:-o,phase:Math.random()<.5?0:1,cell:1,w:0,h:0,lo:0,hi:0};return a.plat=la(),Po(a),a.x=a.lo+(a.hi-a.lo)*Math.random(),a}function fa(){let o=Math.min(ta,window.innerWidth<640?8:12);for(let a=0;a<o;a++)G.push(ra(a*.08));G.forEach(a=>a.age=0)}function Fo(){let o=window.innerWidth,a=window.innerHeight,t=window.devicePixelRatio||1;oo=Math.min(t,Math.sqrt(na/Math.max(1,o*a))),ao=N.width=Math.max(1,Math.round(o*oo)),to=N.height=Math.max(1,Math.round(a*oo)),eo=Math.max(2,Math.round((o<640?3:4)*oo)),R.imageSmoothingEnabled=!1,K=Io(ao,to,eo,ca),L=K.platforms.length?K.platforms:[{x0:0,x1:ao,y:to-2*eo,depth:2}];for(let f of G)f.plat%=L.length,Po(f)}function da(o){no+=o;for(let a of G)if(a.age+=o,!(a.age<0)&&(a.timer-=o,a.mode==="walk"?(a.x+=a.dir*a.speed*a.cell*o,(a.x<a.lo||a.x>a.hi)&&(a.x=_o(a.x,a.lo,a.hi),a.dir*=-1)):a.mode==="jump"&&(a.jump+=o/.6,a.jump>=1&&(a.timer=0)),a.timer<=0)){let t=Math.random();a.jump=0,a.mode!=="walk"?(a.mode="walk",a.timer=O(3,8),t<.35&&(a.dir*=-1)):t<sa?(a.mode="idle",a.timer=O(1,3.5)):t<.2?(a.mode="jump",a.timer=1):(a.mode="idle",a.timer=O(1,3.5))}}function uo(o){R.clearRect(0,0,ao,to),K.drawBack(R,no,o);let a=G.filter(t=>t.age>=0).sort((t,f)=>L[t.plat].depth-L[f.plat].depth||L[t.plat].y-L[f.plat].y);for(let t of a){let f=o&&t.mode==="walk"?(Math.floor(no*6)+t.phase)%2:0,c=jo(t,f),n=L[t.plat].y,s=t.mode==="jump"?Math.round(Math.sin(Math.PI*Math.min(t.jump,1))*6)*t.cell:0,e=To[L[t.plat].depth];t.mode!=="jump"&&(R.globalAlpha=e*.5,R.fillStyle="#000",R.fillRect(t.x+t.cell,n,t.w-2*t.cell,t.cell)),R.globalAlpha=e,R.drawImage(c,Math.round(t.x),n-t.h-s,t.w,t.h)}R.globalAlpha=1,K.drawFront?.(R,no,o)}function Yo(o){if(!Y||(V=requestAnimationFrame(Yo),o-co<ea))return;let a=Math.min(.25,(o-co)/1e3);co=o,da(a),uo(!0)}function Bo(){if(!N){if(N=document.getElementById("pixel"),!N)return;R=N.getContext("2d")}if(!Y){if(Fo(),G.length||fa(),Y=!0,Co.matches){uo(!1),Y=!1;return}co=performance.now(),V=requestAnimationFrame(Yo)}}function Do(){Y=!1,V&&cancelAnimationFrame(V),V=0}var Ro=0;window.addEventListener("resize",()=>{Y&&(clearTimeout(Ro),Ro=setTimeout(()=>{Fo(),uo(!1)},180))});Co.addEventListener("change",()=>{Y&&(Do(),Bo())});globalThis.frengoPixel={start:Bo,stop:Do};})();
+</script>
 
 <script>
 (function () {
@@ -608,6 +920,14 @@
       }
     }
 
+    // Exposed so the theme switch can stop/restore the Matrix rain when the
+    // PS5 pixel backdrop takes over the same layer.
+    window.__frengoRain = {
+      setRunning: setRunning,
+      isRunning: function () { return running; },
+      reduceMotion: reduceMotion
+    };
+
     var resizeTimer = null;
     window.addEventListener("resize", function () {
       clearTimeout(resizeTimer);
@@ -631,6 +951,54 @@
     }
 
     setRunning(!reduceMotion);
+  })();
+
+  /* ---------------- theme switch ---------------- */
+  (function theme() {
+    var KEY = "frengo-theme";
+    var body = document.body;
+    var btn = document.getElementById("themeToggle");
+    var meta = document.getElementById("themeColor");
+    var rain = window.__frengoRain;
+    var pixel = window.frengoPixel;
+    var current = "matrix";
+    var rainPref = rain ? rain.isRunning() : true;
+
+    try {
+      var saved = localStorage.getItem(KEY);
+      if (saved === "ps5" || saved === "matrix") current = saved;
+    } catch (e) { /* storage unavailable */ }
+
+    function apply(next) {
+      var ps5 = next === "ps5";
+      if (current === "matrix" && ps5 && rain) rainPref = rain.isRunning();
+      current = next;
+
+      body.classList.toggle("theme-ps5", ps5);
+      if (btn) {
+        btn.textContent = ps5 ? "grafica: ps5 pixel" : "grafica: terminal";
+        btn.setAttribute("aria-pressed", String(ps5));
+      }
+      if (meta) meta.setAttribute("content", ps5 ? "#0b0b14" : "#001a0a");
+
+      if (ps5) {
+        if (rain) rain.setRunning(false);
+        if (pixel) pixel.start();
+      } else {
+        if (pixel) pixel.stop();
+        if (rain) rain.setRunning(rainPref);
+      }
+
+      try { localStorage.setItem(KEY, next); } catch (e) { /* storage unavailable */ }
+    }
+
+    if (btn) {
+      btn.addEventListener("click", function () {
+        apply(current === "ps5" ? "matrix" : "ps5");
+      });
+    }
+
+    apply(current);
   })();
 
   /* ---------------- calcolatore ---------------- */
